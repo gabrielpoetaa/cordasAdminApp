@@ -15,6 +15,12 @@ import dayjs from "dayjs";
 const date = dayjs();
 console.log(date instanceof dayjs); // true
 
+const courseSchema = z.object ({
+  course: z.string().min(1, "Por favor, selecione um curso"), // Validação para o curso
+  professor: z.string().min(1, "Por favor, selecione um professor"), // Validação para o professor
+
+})
+
 const schema = z
   .object({
     name: z
@@ -35,13 +41,13 @@ const schema = z
     mobileNumber: z
       .string({ message: "Por favor, preencha o campo." })
       .min(10, "O celular deve conter ao menos 10 dígitos"),
-    previousKnowledge: z.boolean(),
-    participateProjects: z.boolean(),
-    musicPreferences: z
-      .array(z.string())
-      .min(1, "Por favor, selecione pelo menos uma preferência musical"),
-    courses: z.string({ message: "Por favor, preencha o campo." }),
-    teachers: z.string({ message: "Por favor, preencha o campo." }),
+    // previousKnowledge: z.boolean(),
+    // participateProjects: z.boolean(),
+    // musicPreferences: z
+    //   .array(z.string())
+    //   .min(1, "Por favor, selecione pelo menos uma preferência musical"),
+    courses: z.array(courseSchema).min(1, "Por favor, escolha pelo menos um curso."),
+    teachers: z.array(courseSchema).min(1, "Por favor, adicione pelo menos um professor."),
     howDidYouFindUs: z
       .array(z.string())
       .min(1, "Por favor, selecione pelo menos uma opção"),
@@ -63,12 +69,12 @@ const sourceSteps = [
     Component: <Address />,
     hasError: false,
   },
-  {
-    label: "Preferências Musicais",
-    fields: ["previousKnowledge", "participateProjects", "musicPreferences"],
-    Component: <MusicPreferences />,
-    hasError: false,
-  },
+  // {
+  //   label: "Preferências Musicais",
+  //   fields: ["previousKnowledge", "participateProjects", "musicPreferences"],
+  //   Component: <MusicPreferences />,
+  //   hasError: false,
+  // },
   {
     label: "Curso escolhido",
     fields: ["courses", "teachers"],
@@ -106,10 +112,10 @@ export function Cadastrar() {
       mobileNumber: "",
       telNumber: "",
       previousKnowledge: "",
-      musicPreferences: [],
+      // musicPreferences: [],
       participateProjects: "",
-      courses: [],
-      teachers: [],
+      courses: [{ course: "", professor: "" }],
+      teachers: [{ course: "", professor: "" }],
       HowDidYouFindUs: [],
     },
   });
