@@ -14,6 +14,8 @@ type BasicSelectProps = {
   name: string;
   label: string;
   list: string[];
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
 export const BasicSelect = ({ name, label, list }: BasicSelectProps) => {
@@ -21,8 +23,8 @@ export const BasicSelect = ({ name, label, list }: BasicSelectProps) => {
 
   const watchedValue = watch(name);
 
-  console.log("Valor selecionado: ", watchedValue);
-  console.log("Tipo do valor selecionado: ", typeof watchedValue);
+  // console.log("Valor selecionado: ", watchedValue);
+  // console.log("Tipo do valor selecionado: ", typeof watchedValue);
 
   return (
     <Controller

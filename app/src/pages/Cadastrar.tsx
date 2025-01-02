@@ -15,6 +15,11 @@ import dayjs from "dayjs";
 const date = dayjs();
 console.log(date instanceof dayjs); // true
 
+const courseSchema = z.object({
+  course: z.string().min(1, "Por favor, selecione um curso"), // Validação para o curso
+  teacher: z.string().min(1, "Por favor, selecione um teacher"), // Validação para o teacher
+});
+
 const schema = z
   .object({
     name: z
@@ -37,11 +42,12 @@ const schema = z
       .min(10, "O celular deve conter ao menos 10 dígitos"),
     previousKnowledge: z.boolean(),
     participateProjects: z.boolean(),
-    musicPreferences: z
-      .array(z.string())
-      .min(1, "Por favor, selecione pelo menos uma preferência musical"),
-    courses: z.string({ message: "Por favor, preencha o campo." }),
-    teachers: z.string({ message: "Por favor, preencha o campo." }),
+    // musicPreferences: z
+    //   .array(z.string())
+    //   .min(1, "Por favor, selecione pelo menos uma preferência musical"),
+    courses: z
+      .array(courseSchema) // Validando o array de objetos `course` e `teacher`
+      .min(1, "Por favor, escolha pelo menos um curso."),
     howDidYouFindUs: z
       .array(z.string())
       .min(1, "Por favor, selecione pelo menos uma opção"),
@@ -65,13 +71,13 @@ const sourceSteps = [
   },
   {
     label: "Preferências Musicais",
-    fields: ["previousKnowledge", "participateProjects", "musicPreferences"],
+    fields: ["previousKnowledge", "participateProjects"],
     Component: <MusicPreferences />,
     hasError: false,
   },
   {
     label: "Curso escolhido",
-    fields: ["courses", "teachers"],
+    fields: ["course", "teacher"],
     Component: <ChosenCourse />,
     hasError: false,
   },
@@ -105,14 +111,15 @@ export function Cadastrar() {
       streetNumber: "",
       mobileNumber: "",
       telNumber: "",
-      previousKnowledge: "",
-      musicPreferences: [],
-      participateProjects: "",
-      courses: [],
-      teachers: [],
+      previousKnowledge: false,
+      participateProjects: false,
+      MusicPreferences: [],
+      courses: [{ course: "", teacher: "" }],
       HowDidYouFindUs: [],
     },
   });
+
+  console.log("Valores do formulário:", methods.getValues()); // Aqui
 
   if (methods.formState.isSubmitSuccessful) {
     return (
@@ -124,6 +131,8 @@ export function Cadastrar() {
       </Box>
     );
   }
+
+  console.log("Erros de validação:", methods.formState.errors);
 
   const steps = getSteps(Object.keys(methods.formState.errors));
 

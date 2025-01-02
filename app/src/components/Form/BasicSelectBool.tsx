@@ -20,8 +20,8 @@ export const BasicSelectBool = ({ name, label }: BasicSelectBoolProps) => {
 
   const watchedValue = watch(name);
 
-  console.log("Valor selecionado: ", watchedValue);
-  console.log("Tipo do valor selecionado: ", typeof watchedValue);
+  // console.log("Valor selecionado: ", watchedValue);
+  // console.log("Tipo do valor selecionado: ", typeof watchedValue);
 
   return (
     <Controller
