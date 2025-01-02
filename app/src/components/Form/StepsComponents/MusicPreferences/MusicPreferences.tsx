@@ -12,30 +12,28 @@ export const MusicPreferences = () => {
     },
   });
   return (
-    <FormProvider {...methods}>
-      <Box
-        marginY={10}
-        marginX="auto"
-        display="flex"
-        flexDirection="column"
-        gap={2}
-        marginTop={10}
-        width={500}
-      >
-        <BasicSelectBool
-          name="previousKnowledge"
-          label="Conhecimentos musicais prévios?"
-        />
-        <MultipleSelect
-          name="musicPreferences"
-          label="Quais estilos de música você mais gosta?"
-          list={listsModule.musicStyles}
-        />
-        <BasicSelectBool
-          name="participateProjects"
-          label="Gostaria de participar dos projetos da escola?"
-        />
-      </Box>
-    </FormProvider>
+    <Box
+      marginY={10}
+      marginX="auto"
+      display="flex"
+      flexDirection="column"
+      gap={2}
+      marginTop={10}
+      width={500}
+    >
+      <BasicSelectBool
+        name="previousKnowledge"
+        label="Conhecimentos musicais prévios?"
+      />
+      <MultipleSelect
+        name="musicPreferences"
+        label="Quais estilos de música você mais gosta?"
+        list={listsModule.musicStyles}
+      />
+      <BasicSelectBool
+        name="participateProjects"
+        label="Gostaria de participar dos projetos da escola?"
+      />
+    </Box>
   );
 };

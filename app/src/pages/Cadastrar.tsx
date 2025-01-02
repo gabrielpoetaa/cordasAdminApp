@@ -42,9 +42,9 @@ const schema = z
       .min(10, "O celular deve conter ao menos 10 dígitos"),
     previousKnowledge: z.boolean(),
     participateProjects: z.boolean(),
-    musicPreferences: z
-      .array(z.string())
-      .min(1, "Por favor, selecione pelo menos uma preferência musical"),
+    // musicPreferences: z
+    //   .array(z.string())
+    //   .min(1, "Por favor, selecione pelo menos uma preferência musical"),
     courses: z
       .array(courseSchema) // Validando o array de objetos `course` e `teacher`
       .min(1, "Por favor, escolha pelo menos um curso."),
@@ -71,7 +71,7 @@ const sourceSteps = [
   },
   {
     label: "Preferências Musicais",
-    fields: ["previousKnowledge", "participateProjects", "musicPreferences"],
+    fields: ["previousKnowledge", "participateProjects"],
     Component: <MusicPreferences />,
     hasError: false,
   },
@@ -111,8 +111,8 @@ export function Cadastrar() {
       streetNumber: "",
       mobileNumber: "",
       telNumber: "",
-      previousKnowledge: "",
-      participateProjects: "",
+      previousKnowledge: false,
+      participateProjects: false,
       MusicPreferences: [],
       courses: [{ course: "", teacher: "" }],
       HowDidYouFindUs: [],
