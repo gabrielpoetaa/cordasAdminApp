@@ -15,8 +15,7 @@ type BasicSelectProps = {
   label: string;
   list: string[];
   value: string;
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void; 
-
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
 export const BasicSelect = ({ name, label, list }: BasicSelectProps) => {
