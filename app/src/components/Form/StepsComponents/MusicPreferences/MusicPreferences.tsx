@@ -5,12 +5,6 @@ import listsModule from "../../../listsModule";
 import { useForm, FormProvider } from "react-hook-form";
 
 export const MusicPreferences = () => {
-  const methods = useForm({
-    defaultValues: {
-      previousKnowledge: false,
-      participateProjects: true,
-    },
-  });
   return (
     <Box
       marginY={10}
