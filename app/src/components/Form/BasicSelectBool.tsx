@@ -30,8 +30,33 @@ export const BasicSelectBool = ({ name, label }: BasicSelectBoolProps) => {
       render={({ field, fieldState }) => (
         <Box display="flex" flexDirection="column">
           <FormControl fullWidth error={Boolean(fieldState.error)}>
-            <InputLabel>{label}</InputLabel>
+            <InputLabel
+              sx={{
+                color: "#ba8638",
+                "&.Mui-focused": {
+                  color: "#ba8638",
+                },
+              }}
+            >
+              {label}
+            </InputLabel>
             <Select
+              sx={{
+                color: "#5d3826",
+                fontWeight: "200",
+                ".MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#d6b56e",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#c99b46",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#ba8638",
+                },
+                ".MuiSvgIcon-root ": {
+                  fill: "#d6b56e !important",
+                },
+              }}
               label={label}
               error={Boolean(fieldState.error)}
               {...field}
