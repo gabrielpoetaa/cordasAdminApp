@@ -106,6 +106,8 @@ export function Cadastrar() {
     defaultValues: {
       name: "",
       dateOfBirth: "",
+      cpf: "",
+      email: "",
       street: "",
       city: "",
       streetNumber: "",
