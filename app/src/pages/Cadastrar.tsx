@@ -11,6 +11,9 @@ import { Address } from "../components/Form/StepsComponents/Address/Address";
 import { ChosenCourse } from "../components/Form/StepsComponents/ChosenCourse/ChosenCourse";
 import { HowDidYouFindUs } from "../components/Form/StepsComponents/HowDidYouFindUs/HowDidYouFindUs";
 import dayjs from "dayjs";
+import { SubmitMessage } from "../components/Form/SubmitMessage";
+import { useEffect, useState } from "react";
+import { CircularProgress } from "@mui/material";
 
 const date = dayjs();
 console.log(date instanceof dayjs); // true
@@ -121,12 +124,54 @@ export function Cadastrar() {
     },
   });
 
-  console.log("Valores do formulário:", methods.getValues()); // Aqui
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCircularProgress, setShowCircularProgress] = useState(false);
 
-  if (methods.formState.isSubmitSuccessful) {
+  // Quando o envio do formulário for bem-sucedido
+  const onSubmit = async (data: any) => {
+    setIsSubmitting(true); // Ativa o estado de submissão
+
+    try {
+      const response = await fetch("http://localhost:5000/students", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro na requisicao");
+      }
+
+      setIsSubmitting(false);
+      setShowCircularProgress(true);
+    } catch (error) {
+      console.error("Erro ao enviar dados: ", error);
+      setIsSubmitting(false);
+    }
+
+    if (isSubmitting) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="100vh"
+        >
+          <CircularProgress /> {/* CircularProgress durante a submissão */}
+        </Box>
+      );
+    }
+  };
+
+  // console.log("Valores do formulário:", methods.getValues());
+
+  // Renderiza a mensagem de sucesso após 2 segundos
+  if (showCircularProgress && methods.formState.isSubmitSuccessful) {
     return (
       <Box>
-        <Typography variant="h2">Formulário enviado com sucesso!</Typography>
+        <SubmitMessage />
         <Button onClick={() => methods.reset()}>
           Clique aqui para enviar um novo cadastro
         </Button>
@@ -134,13 +179,13 @@ export function Cadastrar() {
     );
   }
 
-  console.log("Erros de validação:", methods.formState.errors);
+  // console.log("Erros de validação:", methods.formState.errors);
 
   const steps = getSteps(Object.keys(methods.formState.errors));
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit((data) => console.log(data))}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
         <Steps items={steps} />
       </form>
     </FormProvider>
