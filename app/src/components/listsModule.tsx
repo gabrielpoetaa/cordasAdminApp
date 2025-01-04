@@ -46,7 +46,7 @@ const listsModule = (function () {
     "Forró",
   ];
 
-  const teacher = ["Fulano1", "Fulano2", "Fulano3"];
+  const teacher = ["Rosana Marques", "Gustavo Strapazon", "Eric Nelsis"];
 
   const howDidYouFindUs = [
     "Instagram",

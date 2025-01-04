@@ -4,18 +4,18 @@ import listsModule from "../../../listsModule";
 import { BasicSelect } from "../../BasicSelectNames";
 
 interface Courses {
-  course: string;
-  teacher: string;
+  Course_name: string;
+  Teacher_name: string;
 }
 
 export const ChosenCourse: React.FC = () => {
   // Inicializando com um curso vazio
   const [chosenCourses, setChosenCourses] = useState<Courses[]>([
-    { course: "", teacher: "" },
+    { Course_name: "", Teacher_name: "" },
   ]);
 
   const handleAddCourse = () => {
-    setChosenCourses([...chosenCourses, { course: "", teacher: "" }]);
+    setChosenCourses([...chosenCourses, { Course_name: "", Teacher_name: "" }]);
   };
 
   const handleRemoveCourse = (index: number) => {
@@ -38,10 +38,10 @@ export const ChosenCourse: React.FC = () => {
         <div key={index}>
           <div className="space-y-4">
             <BasicSelect
-              name={`courses[${index}].course`} // Mudando para associar 'course' corretamente no objeto
+              name={`courses[${index}].Course_name`} // Mudando para associar 'course' corretamente no objeto
               label="Curso escolhido"
               list={listsModule.courses}
-              value={courseObject.course} // Passando o valor correto
+              value={courseObject.Course_name} // Passando o valor correto
               onChange={(event) => {
                 setChosenCourses((prevCourses) =>
                   prevCourses.map((course, courseIndex) =>
@@ -53,10 +53,10 @@ export const ChosenCourse: React.FC = () => {
               }}
             />
             <BasicSelect
-              name={`courses[${index}].teacher`} // Mudando para associar 'teacher' corretamente no objeto
+              name={`courses[${index}].Teacher_name`} // Mudando para associar 'teacher' corretamente no objeto
               label="Professor"
               list={listsModule.teacher}
-              value={courseObject.teacher} // Passando o valor correto
+              value={courseObject.Teacher_name} // Passando o valor correto
               onChange={(event) => {
                 setChosenCourses((prevCourses) =>
                   prevCourses.map((course, courseIndex) =>
