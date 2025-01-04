@@ -25,33 +25,33 @@ const courseSchema = z.object({
 
 const schema = z
   .object({
-    name: z
+    student_name: z
       .string({ message: "Por favor, preencha o campo." })
       .min(1, "O nome deve conter ao menos 1 caractere.")
       .max(50, "O máximo de caracteres é 50, por favor corrigir"),
-    dateOfBirth: z.string(),
-    cpf: z
+    Date_of_birth: z.string(),
+    CPF: z
       .string({ message: "Este campo deve conter digitos." })
       .min(11, "O CPF deve conter 11 digitos"),
-    email: z
+    Email: z
       .string({ message: "Por favor, preencha o campo." })
       .min(1, { message: "Por favor, preencha o campo." })
       .email("Esse não é um endereço de e-mail válido"),
-    street: z.string().min(1),
-    streetNumber: z.string().min(1),
-    city: z.string().min(1),
-    mobileNumber: z
-      .string({ message: "Por favor, preencha o campo." })
-      .min(10, "O celular deve conter ao menos 10 dígitos"),
-    previousKnowledge: z.boolean(),
-    participateProjects: z.boolean(),
-    musicPreferences: z
+    // street: z.string().min(1),
+    // streetNumber: z.string().min(1),
+    // city: z.string().min(1),
+    // mobileNumber: z
+    //   .string({ message: "Por favor, preencha o campo." })
+    //   .min(10, "O celular deve conter ao menos 10 dígitos"),
+    Previous_knowledge: z.boolean(),
+    Participate_projects: z.boolean(),
+    Music_Preferences: z
       .array(z.string())
       .min(1, "Por favor, selecione pelo menos uma preferência musical"),
     courses: z
       .array(courseSchema) // Validando o array de objetos `course` e `teacher`
       .min(1, "Por favor, escolha pelo menos um curso."),
-    howDidYouFindUs: z
+    How_did_you_find_us: z
       .array(z.string())
       .min(1, "Por favor, selecione pelo menos uma opção"),
   })
@@ -63,18 +63,18 @@ const sourceSteps = [
   {
     label: "Dados Pessoais",
     Component: <PersonalData />,
-    fields: ["name", "dateOfBirth", "cpf", "email", "mobileNumber"],
+    fields: ["student_name", "Date_of_birth", "CPF", "Email", "mobileNumber"],
     hasError: false,
   },
-  {
-    label: "Dados de Endereço",
-    fields: ["street", "streetNumber", "city"],
-    Component: <Address />,
-    hasError: false,
-  },
+  // {
+  //   label: "Dados de Endereço",
+  //   fields: ["street", "streetNumber", "city"],
+  //   Component: <Address />,
+  //   hasError: false,
+  // },
   {
     label: "Preferências Musicais",
-    fields: ["previousKnowledge", "participateProjects"],
+    fields: ["Previous_knowledge", "Music_Preferences", "Participate_projects"],
     Component: <MusicPreferences />,
     hasError: false,
   },
@@ -86,7 +86,7 @@ const sourceSteps = [
   },
   {
     label: "Como você nos conheceu?",
-    fields: ["howDidYouFindUs"],
+    fields: ["How_did_you_find_us"],
     Component: <HowDidYouFindUs />,
     hasError: false,
   },
@@ -107,20 +107,20 @@ export function Cadastrar() {
     criteriaMode: "all",
     mode: "all",
     defaultValues: {
-      name: "",
-      dateOfBirth: "",
-      cpf: "",
-      email: "",
+      student_name: "",
+      Date_of_birth: "",
+      CPF: "",
+      Email: "",
       street: "",
       city: "",
       streetNumber: "",
       mobileNumber: "",
       telNumber: "",
-      previousKnowledge: false,
-      participateProjects: false,
-      MusicPreferences: [],
+      Previous_knowledge: false,
+      Participate_projects: false,
+      Music_Preferences: [],
       courses: [{ course: "", teacher: "" }],
-      HowDidYouFindUs: [],
+      How_did_you_find_us: [],
     },
   });
 
