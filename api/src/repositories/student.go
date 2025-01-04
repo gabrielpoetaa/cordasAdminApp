@@ -36,6 +36,32 @@ func (repository Students) Create(student models.Student) (uint64, error) {
 		return 0, err
 	}
 
+	courseIDMap := make(map[string]int)
+	teacherIDMap := make(map[string]int)
+
+
+	// Verificar os cursos e professores antes de inserir o estudante
+	for _, course := range student.Courses {
+		// Seleciona o ID do curso de acordo com o nome que veio na requisição
+		var courseID int
+		err := repository.db.QueryRow("SELECT id FROM courses WHERE course_name = ?", course.CourseName).Scan(&courseID)
+		if err != nil {
+			log.Printf("Error finding course by name: %v", err)
+			return 0, err
+		}
+		courseIDMap[course.CourseName] = courseID
+
+		// Seleciona o ID do professor de acordo com o nome que veio na requisição
+		var teacherID int
+		err = repository.db.QueryRow("SELECT id FROM teachers WHERE teacher_name = ?", course.TeacherName).Scan(&teacherID)
+		if err != nil {
+			log.Printf("Error finding teacher by name: %v", err)
+			return 0, err
+		}
+		teacherIDMap[course.TeacherName] = teacherID
+	}
+
+	// Preparação do comando para inserir estudante
 	statementStudent, err := repository.db.Prepare(
 		"insert into students (Student_name, Date_of_birth, CPF, Email, Previous_knowledge, Participate_projects, Music_preferences, How_did_you_find_us) values (?, ?, ?, ?, ?, ?, ?, ?)",
 	)
@@ -44,9 +70,9 @@ func (repository Students) Create(student models.Student) (uint64, error) {
 		return 0, err
 	}
 
-
 	defer statementStudent.Close()
-
+	
+	// Inserção do estudante
 	resultStudent, err := statementStudent.Exec(
 		student.Student_name,
 		student.Date_of_birth,
@@ -69,25 +95,11 @@ func (repository Students) Create(student models.Student) (uint64, error) {
         return 0, err
     }
 
+	// Relacionar o estudante ao curso
 	for _, course := range student.Courses {
-
-		// Seleciona o ID do curso de acordo com o nome que veio na requisição
-		var courseID int
-		err := repository.db.QueryRow("SELECT id FROM courses WHERE course_name = ?", course.CourseName).Scan(&courseID)
-		if err != nil {
-			log.Printf("Error finding course by name: %v", err)
-			return 0, err
-		}
-
-		// Seleciona o ID do professor de acordo com o nome que veio na requisição
-		var teacherID int
-		err = repository.db.QueryRow("SELECT id FROM teachers WHERE teacher_name = ?", course.TeacherName).Scan(&teacherID)
-		if err != nil {
-			log.Printf("Error finding teacher by name: %v", err)
-			return 0, err
-		}
-
-		// Relacionar o estudante ao curso
+		courseID := courseIDMap[course.CourseName]
+		teacherID := teacherIDMap[course.TeacherName]
+	
 		statementCourseRelation, err := repository.db.Prepare(
 			"INSERT INTO student_course (student_id, course_id) VALUES (?, ?)",
 		)
@@ -130,5 +142,6 @@ func (repository Students) Create(student models.Student) (uint64, error) {
 		}
 	}
 
+	
 	return uint64(studentID), nil
 }
