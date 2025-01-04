@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import { SubmitMessage } from "../components/Form/SubmitMessage";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import { ResetFormButton } from "../components/Form/ResetFormButton";
 
 const date = dayjs();
 console.log(date instanceof dayjs); // true
@@ -172,9 +173,7 @@ export function Cadastrar() {
     return (
       <Box>
         <SubmitMessage />
-        <Button onClick={() => methods.reset()}>
-          Clique aqui para enviar um novo cadastro
-        </Button>
+        <ResetFormButton onClick={() => methods.reset()} />
       </Box>
     );
   }
