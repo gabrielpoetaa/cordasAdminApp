@@ -19,8 +19,8 @@ const date = dayjs();
 console.log(date instanceof dayjs); // true
 
 const courseSchema = z.object({
-  course: z.string().min(1, "Por favor, selecione um curso"), // Validação para o curso
-  teacher: z.string().min(1, "Por favor, selecione um teacher"), // Validação para o teacher
+  Course_name: z.string().min(1, "Por favor, selecione um curso"), // Validação para o curso
+  Teacher_name: z.string().min(1, "Por favor, selecione um teacher"), // Validação para o teacher
 });
 
 const schema = z
@@ -80,7 +80,7 @@ const sourceSteps = [
   },
   {
     label: "Curso escolhido",
-    fields: ["course", "teacher"],
+    fields: ["Course_name", "Course_name"],
     Component: <ChosenCourse />,
     hasError: false,
   },
@@ -119,7 +119,7 @@ export function Cadastrar() {
       Previous_knowledge: false,
       Participate_projects: false,
       Music_Preferences: [],
-      courses: [{ course: "", teacher: "" }],
+      courses: [{ Course_name: "", Teacher_name: "" }],
       How_did_you_find_us: [],
     },
   });
@@ -165,7 +165,7 @@ export function Cadastrar() {
     }
   };
 
-  // console.log("Valores do formulário:", methods.getValues());
+  console.log("Valores do formulário:", methods.getValues());
 
   // Renderiza a mensagem de sucesso após 2 segundos
   if (showCircularProgress && methods.formState.isSubmitSuccessful) {
