@@ -14,7 +14,7 @@ export const HowDidYouFindUs = () => {
       width={500}
     >
       <MultipleSelect
-        name="howDidYouFindUs"
+        name="How_did_you_find_us"
         label="Como você nos conheceu?"
         list={listsModule.howDidYouFindUs}
       />
