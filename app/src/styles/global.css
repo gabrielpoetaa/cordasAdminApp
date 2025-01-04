@@ -61,7 +61,40 @@
 }
 
 .btnForm:hover {
-  background-color: var(--goldCordas_500); /* Cor de fundo ao passar o mouse */
+  background-color: var(--goldCordas_300); /* Cor de fundo ao passar o mouse */
+}
+
+.btnFormOutline {
+  border: none;
+  color: var(--goldCordas_500);
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px; /* Raio do botão */
+  border: 1px solid var(--goldCordas_300);
+  transition: background-color 0.3s;
+  text-transform: none;
+}
+
+.btnFormOutline:hover {
+  background-color: var(--goldCordas_300); /* Cor de fundo */
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px; /* Raio do botão */
+  border: 1px solid var(--goldCordas_300);
+  transition: background-color 0.3s;
+  text-transform: none;
 }
 
 .css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root.Mui-active {
