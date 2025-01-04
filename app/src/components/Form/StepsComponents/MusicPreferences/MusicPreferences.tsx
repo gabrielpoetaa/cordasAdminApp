@@ -16,16 +16,16 @@ export const MusicPreferences = () => {
       width={500}
     >
       <BasicSelectBool
-        name="previousKnowledge"
+        name="Previous_knowledge"
         label="Conhecimentos musicais prévios?"
       />
       <MultipleSelect
-        name="musicPreferences"
+        name="Music_Preferences"
         label="Quais estilos de música você mais gosta?"
         list={listsModule.musicStyles}
       />
       <BasicSelectBool
-        name="participateProjects"
+        name="Participate_projects"
         label="Gostaria de participar dos projetos da escola?"
       />
     </Box>

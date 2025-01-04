@@ -15,10 +15,10 @@ export const PersonalData = () => {
       width={500}
     >
       {/* <NameInput /> */}
-      <FormInput name="name" label="Nome" />
-      <BasicDatePicker name="dateOfBirth" label="Data de Nascimento" />
-      <FormInput name="cpf" label="CPF do responsável" />
-      <FormInput name="email" label="Email" />
+      <FormInput name="student_name" label="Nome" />
+      <BasicDatePicker name="Date_of_birth" label="Data de Nascimento" />
+      <FormInput name="CPF" label="CPF do responsável" />
+      <FormInput name="Email" label="Email" />
       {/* <FormInput name="telNumber" label="Telefone" /> */}
       <FormInput name="mobileNumber" label="(DDD) + Celular / Whatsapp" />
     </Box>
