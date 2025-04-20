@@ -31,6 +31,5 @@ This is a full-stack web application composed of a modern React front-end and a 
 ### Front-end
 
 ```bash
-cd frontend
 npm install
 npm run dev
