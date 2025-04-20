@@ -1,4 +1,4 @@
-# Full-Stack Web Application
+# Cordas & Cordas Form
 
 This is a full-stack web application composed of a modern React front-end and a Go-based back-end API. It provides seamless integration with a MySQL database and supports internationalization, form validation, and responsive UI components.
 
