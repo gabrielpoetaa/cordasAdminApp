@@ -11,5 +11,5 @@ This is the backend of the full-stack application, built with Go. It provides a 
 - [GORM](https://gorm.io/) — ORM for Go (optional, if used)
 - [Gin](https://gin-gonic.com/) — Lightweight web framework (optional, if used)
 
-## 📁 Project Structure (example)
+
 
