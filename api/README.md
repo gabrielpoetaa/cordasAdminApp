@@ -1,4 +1,4 @@
-# Cordas & Cordas API Form
+# Cordas & Cordas Form API
 
 ## 📦 Backend API - Go + MySQL
 
