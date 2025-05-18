@@ -62,6 +62,7 @@ func CreateStudent(w http.ResponseWriter, r *http.Request) {
 
 func SearchStudents(w http.ResponseWriter, r *http.Request){
 	w.Write([]byte("Buscando estudantes!"))
+        // Retorna a resposta com o estudante criado
 }
 func SearchStudent(w http.ResponseWriter, r *http.Request){
 	w.Write([]byte("Buscando um estudante!"))

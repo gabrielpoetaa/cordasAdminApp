@@ -38,13 +38,14 @@ func (repository Students) Create(student models.Student) (uint64, error) {
 
 	courseIDMap := make(map[string]int)
 	teacherIDMap := make(map[string]int)
+	processedTeachers := make(map[string]bool) // Para controlar professores já processados
 
 
 	// Verificar os cursos e professores antes de inserir o estudante
 	for _, course := range student.Courses {
 		// Seleciona o ID do curso de acordo com o nome que veio na requisição
 		var courseID int
-		err := repository.db.QueryRow("SELECT id FROM courses WHERE course_name = ?", course.CourseName).Scan(&courseID)
+		err := repository.db.QueryRow("SELECT id FROM courses WHERE course_name = $1", course.CourseName).Scan(&courseID)
 		if err != nil {
 			log.Printf("Error finding course by name: %v", err)
 			return 0, err
@@ -53,7 +54,7 @@ func (repository Students) Create(student models.Student) (uint64, error) {
 
 		// Seleciona o ID do professor de acordo com o nome que veio na requisição
 		var teacherID int
-		err = repository.db.QueryRow("SELECT id FROM teachers WHERE teacher_name = ?", course.TeacherName).Scan(&teacherID)
+		err = repository.db.QueryRow("SELECT id FROM teachers WHERE teacher_name = $1", course.TeacherName).Scan(&teacherID)
 		if err != nil {
 			log.Printf("Error finding teacher by name: %v", err)
 			return 0, err
@@ -63,17 +64,17 @@ func (repository Students) Create(student models.Student) (uint64, error) {
 
 	// Preparação do comando para inserir estudante
 	statementStudent, err := repository.db.Prepare(
-		"insert into students (Student_name, Date_of_birth, CPF, Email, Previous_knowledge, Participate_projects, Music_preferences, How_did_you_find_us) values (?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO students (Student_name, Date_of_birth, CPF, Email, Previous_knowledge, Participate_projects, Music_preferences, How_did_you_find_us) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
 	)
 	if err != nil {
 		log.Printf("Error preparing statement: %v", err)
 		return 0, err
 	}
-
 	defer statementStudent.Close()
-	
+
 	// Inserção do estudante
-	resultStudent, err := statementStudent.Exec(
+	var studentID int64
+	err = statementStudent.QueryRow(
 		student.Student_name,
 		student.Date_of_birth,
 		student.CPF,
@@ -82,26 +83,21 @@ func (repository Students) Create(student models.Student) (uint64, error) {
 		student.Participate_projects,
 		musicPreferencesJSON,
 		howDidYouFindUsJSON,
-	)
+	).Scan(&studentID)
 
     if err != nil {
         log.Printf("Error executing statement: %v", err)
         return 0, err
     }
 
-    studentID, err := resultStudent.LastInsertId()
-    if err != nil {
-        log.Printf("Error retrieving LastInsertId: %v", err)
-        return 0, err
-    }
-
-	// Relacionar o estudante ao curso
+	// Relacionar o estudante aos cursos e professores
 	for _, course := range student.Courses {
 		courseID := courseIDMap[course.CourseName]
 		teacherID := teacherIDMap[course.TeacherName]
 	
+		// Inserir relação estudante-curso
 		statementCourseRelation, err := repository.db.Prepare(
-			"INSERT INTO student_course (student_id, course_id) VALUES (?, ?)",
+			"INSERT INTO student_course (student_id, course_id) VALUES ($1, $2)",
 		)
 		if err != nil {
 			log.Printf("Error preparing statement for student-course relationship: %v", err)
@@ -115,26 +111,30 @@ func (repository Students) Create(student models.Student) (uint64, error) {
 			return 0, err
 		}
 
-		// Relacionar o estudante ao professor
-		statementTeacherRelation, err := repository.db.Prepare(
-			"INSERT INTO student_teacher (student_id, teacher_id) VALUE (?, ?)", 
-		)
-		if err != nil {
-			log.Printf("Error preparing statement for student-teacher relationship: %v", err)
-			return 0, err
-		}
-		defer statementTeacherRelation.Close()
+		// Inserir relação estudante-professor apenas se ainda não foi processado
+		if !processedTeachers[course.TeacherName] {
+			statementTeacherRelation, err := repository.db.Prepare(
+				"INSERT INTO student_teacher (student_id, teacher_id) VALUES ($1, $2)", 
+			)
+			if err != nil {
+				log.Printf("Error preparing statement for student-teacher relationship: %v", err)
+				return 0, err
+			}
+			defer statementTeacherRelation.Close()
 
-		_, err = statementTeacherRelation.Exec(studentID, teacherID)
-		if err != nil {
-			log.Printf("Error executing statament for student-teacher relationship: %v", err)
-			return 0, err
+			_, err = statementTeacherRelation.Exec(studentID, teacherID)
+			if err != nil {
+				log.Printf("Error executing statement for student-teacher relationship: %v", err)
+				return 0, err
+			}
+			processedTeachers[course.TeacherName] = true
 		}
 
-		// Inserir o relacionamento entre professor e curso, se não existir
+		// Inserir o relacionamento entre professor e curso
 		_, err = repository.db.Exec(`
 			INSERT INTO teacher_course (teacher_id, course_id)
-			VALUES (?, ?)
+			VALUES ($1, $2)
+			ON CONFLICT (teacher_id, course_id) DO NOTHING
 		`, teacherID, courseID)
 		if err != nil {
 			log.Printf("Error inserting teacher-course relationship: %v", err)

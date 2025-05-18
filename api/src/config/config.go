@@ -1,10 +1,13 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -20,17 +23,36 @@ var (
 func LoadEnv() {
 	var err error
 
-	if err = godotenv.Load(); err != nil {
-	log.Fatal()
+	// Get the current working directory
+	workDir, err := os.Getwd()
+	if err != nil {
+		log.Printf("Error getting working directory: %v\n", err)
+	}
+
+	// Navigate up to the api root if we're in a subdirectory
+	if strings.Contains(workDir, "src") {
+		workDir = filepath.Join(workDir, "..", "..")
+	}
+
+	// Try to load .env from the api root directory
+	envPath := filepath.Join(workDir, ".env")
+	log.Printf("Trying to load .env from: %s\n", envPath)
+	
+	if err = godotenv.Load(envPath); err != nil {
+		log.Printf("Error loading .env file: %v\n", err)
 	}
 
 	Port, err = strconv.Atoi(os.Getenv("API_PORT"))
 	if err != nil {
 		Port = 9000
+		log.Printf("Using default port: %d\n", Port)
 	}
 
 	DbConnectionString = os.Getenv("STRING_CONEXAO")
-
+	if DbConnectionString == "" {
+		log.Fatal("STRING_CONEXAO environment variable is not set")
+	}
+	fmt.Printf("Loaded connection string: %s\n", DbConnectionString)
 
 	// fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
 	// 	os.Getenv("DB_USER"),
