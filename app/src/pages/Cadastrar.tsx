@@ -41,16 +41,20 @@ const schema = z
     // street: z.string().min(1),
     // streetNumber: z.string().min(1),
     // city: z.string().min(1),
-    // mobileNumber: z
-    //   .string({ message: "Por favor, preencha o campo." })
-    //   .min(10, "O celular deve conter ao menos 10 dígitos"),
+    mobileNumber: z
+      .array(
+        z
+          .string({ message: "Por favor, preencha o campo." })
+          .min(10, "O celular deve conter ao menos 10 dígitos")
+      )
+      .min(1, "Por favor, adicione pelo menos um número de telefone"),
     Previous_knowledge: z.boolean(),
     Participate_projects: z.boolean(),
     Music_Preferences: z
       .array(z.string())
       .min(1, "Por favor, selecione pelo menos uma preferência musical"),
     courses: z
-      .array(courseSchema) // Validando o array de objetos `course` e `teacher`
+      .array(courseSchema)
       .min(1, "Por favor, escolha pelo menos um curso."),
     How_did_you_find_us: z
       .array(z.string())
@@ -115,8 +119,7 @@ export function Cadastrar() {
       street: "",
       city: "",
       streetNumber: "",
-      mobileNumber: "",
-      telNumber: "",
+      mobileNumber: [""], // Inicializando com um array contendo uma string vazia
       Previous_knowledge: false,
       Participate_projects: false,
       Music_Preferences: [],
@@ -128,9 +131,21 @@ export function Cadastrar() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCircularProgress, setShowCircularProgress] = useState(false);
 
+  // Log para debug do estado do formulário
+  useEffect(() => {
+    console.log("Form State:", {
+      values: methods.getValues(),
+      errors: methods.formState.errors,
+      isDirty: methods.formState.isDirty,
+      isSubmitting: methods.formState.isSubmitting,
+      isSubmitSuccessful: methods.formState.isSubmitSuccessful,
+    });
+  }, [methods.formState]);
+
   // Quando o envio do formulário for bem-sucedido
   const onSubmit = async (data: any) => {
-    setIsSubmitting(true); // Ativa o estado de submissão
+    console.log("Submitting form with data:", data);
+    setIsSubmitting(true);
 
     try {
       const response = await fetch("http://localhost:5000/students", {
@@ -145,31 +160,22 @@ export function Cadastrar() {
         throw new Error("Erro na requisicao");
       }
 
+      console.log("Form submitted successfully");
       setIsSubmitting(false);
       setShowCircularProgress(true);
     } catch (error) {
       console.error("Erro ao enviar dados: ", error);
       setIsSubmitting(false);
     }
-
-    if (isSubmitting) {
-      return (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight="100vh"
-        >
-          <CircularProgress /> {/* CircularProgress durante a submissão */}
-        </Box>
-      );
-    }
   };
 
-  console.log("Valores do formulário:", methods.getValues());
+  // Log para debug dos steps
+  const steps = getSteps(Object.keys(methods.formState.errors));
+  console.log("Current steps with errors:", steps);
 
   // Renderiza a mensagem de sucesso após 2 segundos
   if (showCircularProgress && methods.formState.isSubmitSuccessful) {
+    console.log("Showing success message");
     return (
       <Box>
         <SubmitMessage />
@@ -177,10 +183,6 @@ export function Cadastrar() {
       </Box>
     );
   }
-
-  // console.log("Erros de validação:", methods.formState.errors);
-
-  const steps = getSteps(Object.keys(methods.formState.errors));
 
   return (
     <FormProvider {...methods}>
