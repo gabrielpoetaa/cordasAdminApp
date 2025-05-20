@@ -180,3 +180,51 @@ func (repository Students) Create(student models.Student) (uint64, error) {
 	
 	return uint64(studentID), nil
 }
+
+// GetByID busca um estudante pelo ID
+func (repository Students) GetByID(studentID uint64) (models.Student, error) {
+	var student models.Student
+	var musicPreferencesStr, howDidYouFindUsStr sql.NullString
+
+	// Busca os dados básicos do estudante
+	err := repository.db.QueryRow(`
+		SELECT id, Student_name, Date_of_birth, CPF, Email, Previous_knowledge, Participate_projects, Music_preferences, How_did_you_find_us
+		FROM students WHERE id = $1`, studentID).
+		Scan(&student.ID, &student.Student_name, &student.Date_of_birth, &student.CPF, &student.Email,
+			&student.Previous_knowledge, &student.Participate_projects, &musicPreferencesStr, &howDidYouFindUsStr)
+	if err != nil {
+		return student, err
+	}
+
+	// Converte os campos JSON
+	if musicPreferencesStr.Valid {
+		if err := json.Unmarshal([]byte(musicPreferencesStr.String), &student.Music_preferences); err != nil {
+			return student, err
+		}
+	}
+	if howDidYouFindUsStr.Valid {
+		if err := json.Unmarshal([]byte(howDidYouFindUsStr.String), &student.How_did_you_find_us); err != nil {
+			return student, err
+		}
+	}
+
+	// Busca os telefones relacionados
+	rows, err := repository.db.Query("SELECT id, student_id, phone_number FROM phones WHERE student_id = $1", studentID)
+	if err != nil {
+		return student, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var phone models.Phone
+		if err := rows.Scan(&phone.ID, &phone.StudentID, &phone.PhoneNumber); err != nil {
+			return student, err
+		}
+		student.Phones = append(student.Phones, phone)
+	}
+
+	return student, nil
+}
+
+
+
