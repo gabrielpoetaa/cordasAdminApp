@@ -17,6 +17,12 @@ type Address struct {
 	Country                string `json:"country,omitempty"`
 }
 
+type Phone struct {
+	ID          uint64 `json:"id,omitempty"`
+	StudentID   uint64 `json:"student_id,omitempty"`
+	PhoneNumber string `json:"phone_number,omitempty"`
+}
+
 type Student struct {
 	ID                   uint64   `json:"id,omitempty"`
 	Student_name         string   `json:"student_name,omitempty"`
