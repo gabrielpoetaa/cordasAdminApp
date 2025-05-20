@@ -17,8 +17,8 @@
 
 ## 📁 Project Structure
 
-- [`api/`](#https://github.com/gabrielpoetaa/cordasAdminApp/tree/main/api) – Backend logic and services  
-- [`app/`](#https://github.com/gabrielpoetaa/cordasAdminApp/tree/main/api) – Frontend interface and logic  
+- [`api/`](./api) – Backend logic and services  
+- [`app/`](./app) – Frontend interface and logic  
 
 ---
 
