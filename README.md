@@ -9,9 +9,7 @@
 - TypeScript  
 - Go  
 - Postgres  
-- CSS  
-- JavaScript  
-- HTML  
+- React
 
 ---
 
