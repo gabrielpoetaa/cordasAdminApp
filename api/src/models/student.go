@@ -44,11 +44,21 @@ type Course struct {
 }
 
 func (student *Student) Prepare() error {
+	// Primeiro converte os números de telefone
+	student.Phones = make([]Phone, len(student.MobileNumberStrings))
+	for i, phoneNumber := range student.MobileNumberStrings {
+		student.Phones[i] = Phone{
+			PhoneNumber: phoneNumber,
+		}
+	}
+
+	// Depois valida e formata
 	if err := student.validate(); err != nil {
 		return err
 	}
 
 	student.format()
+
 	return nil
 }
 
@@ -59,21 +69,23 @@ func (student *Student) validate() error {
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
 		fieldType := field.Type()
+		fieldName := typeOfT.Field(i).Name
 
-		if fieldType.Kind() == reflect.String || fieldType.Kind() == reflect.Slice {
-			if field.String() == "" {
-				return errors.New ("Campo " + typeOfT.Field(i).Name + " é obrigatório")
-			}
-			if field.Len() == 0 {
-				return errors.New("Campo " + typeOfT.Field(i).Name + " é obrigatório")
-			}
+		// Ignora campos que são preenchidos internamente
+		if fieldName == "ID" || fieldName == "Phones" {
+			continue
 		}
 
+		if fieldType.Kind() == reflect.String {
+			if field.String() == "" {
+				return errors.New("Campo " + fieldName + " é obrigatório")
+			}
+		} else if fieldType.Kind() == reflect.Slice {
+			if field.Len() == 0 {
+				return errors.New("Campo " + fieldName + " é obrigatório")
+			}
+		}
 	}
-
-	// if student.Student_name == "" {
-	// 	return errors.New("O nome é obrigatório!")
-	// }
 
 	return nil
 }
