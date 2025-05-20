@@ -90,6 +90,41 @@ func (repository Students) Create(student models.Student) (uint64, error) {
         return 0, err
     }
 
+	// Log dos dados do estudante no repositório
+	log.Printf("Dados do estudante no repositório: %+v", student)
+	log.Printf("Números de telefone no repositório: %+v", student.Phones)
+
+	// Inserir os números de telefone
+	if len(student.Phones) > 0 {
+		log.Printf("Inserindo %d números de telefone", len(student.Phones))
+		statementPhone, err := repository.db.Prepare(
+			"INSERT INTO phones (student_id, phone_number) VALUES ($1, $2) RETURNING id",
+		)
+		if err != nil {
+			log.Printf("Error preparing statement for phones: %v", err)
+			return 0, err
+		}
+		defer statementPhone.Close()
+
+		for i := range student.Phones {
+			if student.Phones[i].PhoneNumber != "" { // Só insere se o número não for vazio
+				log.Printf("Inserindo telefone: %+v", student.Phones[i])
+				var phoneID int64
+				err = statementPhone.QueryRow(studentID, student.Phones[i].PhoneNumber).Scan(&phoneID)
+				if err != nil {
+					log.Printf("Error inserting phone number: %v", err)
+					return 0, err
+				}
+				student.Phones[i].ID = uint64(phoneID)
+				student.Phones[i].StudentID = uint64(studentID)
+				log.Printf("Telefone inserido com sucesso. ID: %d", phoneID)
+			}
+		}
+	} else {
+		log.Printf("Nenhum número de telefone para inserir")
+	}
+	
+	
 	// Relacionar o estudante aos cursos e professores
 	for _, course := range student.Courses {
 		courseID := courseIDMap[course.CourseName]
