@@ -1,6 +1,6 @@
 # cordasAdminApp
 
-**cordasAdminApp** is an administrative application that integrates both the frontend and backend in a single monorepo.
+**cordasAdminApp** is an administrative application that manages student enrollment and automates payment processes via [Asaas](https://www.asaas.com/).
 
 ---
 
