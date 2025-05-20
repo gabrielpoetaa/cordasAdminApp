@@ -17,17 +17,25 @@ type Address struct {
 	Country                string `json:"country,omitempty"`
 }
 
+type Phone struct {
+	ID          uint64 `json:"id,omitempty"`
+	StudentID   uint64 `json:"student_id,omitempty"`
+	PhoneNumber string `json:"phone_number,omitempty"`
+}
+
 type Student struct {
-	ID                   uint64   `json:"id,omitempty"`
-	Student_name         string   `json:"student_name,omitempty"`
-	Date_of_birth        string   `json:"date_of_birth,omitempty"`
-	CPF                  string   `json:"cpf,omitempty"`
-	Email                string   `json:"email,omitempty"`
-	Previous_knowledge   bool     `json:"Previous_knowledge,omitempty"`
-	Participate_projects bool     `json:"Participate_projects,omitempty"`
-	Music_preferences    []string `json:"Music_Preferences,omitempty"`
-	How_did_you_find_us  []string `json:"How_did_you_find_us,omitempty"`
-	Courses             []Course  `json:"courses,omitempty"`
+	ID                  uint64      `json:"id"`
+	Student_name        string      `json:"Student_name"`
+	Date_of_birth       string      `json:"Date_of_birth"`
+	CPF                 string      `json:"CPF"`
+	Email               string      `json:"Email"`
+	Previous_knowledge  bool        `json:"Previous_knowledge"`
+	Participate_projects bool        `json:"Participate_projects"`
+	Music_preferences   []string    `json:"Music_Preferences"`
+	How_did_you_find_us []string    `json:"How_did_you_find_us"`
+	MobileNumberStrings []string    `json:"mobileNumber"` // Campo temporário para receber os números como strings
+	Phones              []Phone     `json:"phones"`        // Campo que será usado para salvar no banco
+	Courses             []Course    `json:"courses"`
 }
 
 type Course struct {
@@ -36,11 +44,21 @@ type Course struct {
 }
 
 func (student *Student) Prepare() error {
+	// Primeiro converte os números de telefone
+	student.Phones = make([]Phone, len(student.MobileNumberStrings))
+	for i, phoneNumber := range student.MobileNumberStrings {
+		student.Phones[i] = Phone{
+			PhoneNumber: phoneNumber,
+		}
+	}
+
+	// Depois valida e formata
 	if err := student.validate(); err != nil {
 		return err
 	}
 
 	student.format()
+
 	return nil
 }
 
@@ -51,21 +69,23 @@ func (student *Student) validate() error {
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
 		fieldType := field.Type()
+		fieldName := typeOfT.Field(i).Name
 
-		if fieldType.Kind() == reflect.String || fieldType.Kind() == reflect.Slice {
-			if field.String() == "" {
-				return errors.New ("Campo " + typeOfT.Field(i).Name + " é obrigatório")
-			}
-			if field.Len() == 0 {
-				return errors.New("Campo " + typeOfT.Field(i).Name + " é obrigatório")
-			}
+		// Ignora campos que são preenchidos internamente
+		if fieldName == "ID" || fieldName == "Phones" {
+			continue
 		}
 
+		if fieldType.Kind() == reflect.String {
+			if field.String() == "" {
+				return errors.New("Campo " + fieldName + " é obrigatório")
+			}
+		} else if fieldType.Kind() == reflect.Slice {
+			if field.Len() == 0 {
+				return errors.New("Campo " + fieldName + " é obrigatório")
+			}
+		}
 	}
-
-	// if student.Student_name == "" {
-	// 	return errors.New("O nome é obrigatório!")
-	// }
 
 	return nil
 }
